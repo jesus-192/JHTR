@@ -8,7 +8,7 @@
         <meta http-equiv="Content-Security-Policy"  content="default-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js 'unsafe-inline'; img-src https://* 'self' data:; upgrade-insecure-requests; connect-src https://*">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-       <!-- <script type="text/javascript" src="jquery.qrcode.min.js"></script>-->
+        <script type="text/javascript" src="./js/jquery-qrcode-master/jquery.qrcode.min.js"></script>
      </head>
 	<body>	
     	<div class="wrapper">
@@ -45,7 +45,7 @@
                         </tr>
                     </tbody>
                 </table>	
-                <p style="text-align: center;">HOJA DE REGISTRO DE TRAZABILIDAD INICIAL</p>
+             <!--   <p style="text-align: center;">HOJA DE REGISTRO DE TRAZABILIDAD INICIAL</p>
                 <br>
                 <p style="text-align: center;">ESTA HOJA DEBERA LLENARSE EN SU TOTALIDAD CON LOS SIGUIENTES REQUISITOS:</p>
                 <br>
@@ -54,10 +54,22 @@
                 <p>3- Cada operador debe llenar sus campos correspondientes y colocar su número de reloj no su nombre.</p>
                 <p>4- El número de parte (ya como flecha) debe de estar completo.</p>
                 <p>5- En caso de existir rechazos hay que capturar la cantidad exacta.</p>
+            -->
                 <br>
                 <!-- Insertar un numero generado de la siguiente manera con esas letras literal y esa info: -->
-                <b>P<label id="numeroParte">{numeroParte}</label>Q0000{cantidad}S<label id="numeroUnico1">{numeroUnico}</label>L<label id="atado">{atado}</label></b>
-                <div id="demo"></div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-5 col-lg-5">
+                        P<label id="numeroParte">{numeroParte}</label>Q0000{cantidad}S<label id="numeroUnico1">{numeroUnico}</label>L<label id="atado">{atado}</label>
+                    </div>
+                </div>
+                <br><br><br>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12" style="text-align:center">
+                        <div id="demo"></div>
+                    </div>
+                </div>
+                
+                
                 <br><br><br><br><br><br>
                 <p>IMPRIMIO: <label>{nombreOperador}</label></p>
                 <p style="text-align: center;"> ATADO: <label id="atado1">{atado}</label></p>
@@ -74,7 +86,7 @@
         $(document).ready(function(){
             var numeroEmpleado = localStorage.getItem("numEmpleado");
             var atado = localStorage.getItem("atado");
-
+            //$.get("https://localhost:44323/api/app/corte/"+numeroEmpleado+"/detalle?atado="+atado, function(data){
             $.get("https://oee-api.azurewebsites.net/api/app/corte/"+numeroEmpleado+"/detalle?atado="+atado, function(data){
                 if(data.id > 0){
                     $('#Error3').hide(); 
@@ -88,7 +100,14 @@
                     $("#numeroUnico1").text(data.numeroUnicoFormato);
                     $("#atado1").text(data.atado);
 
-                    //jQuery("#demo").qrcode("url o algo de texto");
+                    var codigo = "P" + data.numeroUnicoFormato + "Q0000" + "{cantidad}" + "S"+data.numeroUnicoFormato + "L"+data.atado;
+
+                    jQuery("#demo").qrcode({
+                        width: 128,
+                        height: 128,
+                        text: codigo
+                    });
+
 
 // ó
 
@@ -106,7 +125,7 @@ jQuery("#demo").qrcode({
                     
                 }else{
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 $('#Error3').show(); 
                 $("#nombreUsuario").text("")
             });
