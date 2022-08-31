@@ -22,6 +22,10 @@
                             <td colspan="2"><label id="numeroUnico">{numeroUnico}</label></td>
                         </tr>
                         <tr>
+                            <td colspan="2">CORTADORA</td>
+                            <td colspan="2"><label id="maquina"></label></td>
+                        </tr>
+                        <tr>
                             <td>NÚMERO PARTE</td>
                             <td><label id="numeroParte">{numeroParte}</label></td>
                             <td colspan="2">FECHA DE INICIO</td>
@@ -29,13 +33,13 @@
                         <tr>
                             <td>CANTIDAD</td>
                             <td><label id="cantidad"></label></td>
-                            <td><label id="dia">DÍA:</label>&nbsp;&nbsp;{dia}</td>
-                            <td><label id="mes">MES:</label>&nbsp;&nbsp;{mes}</td>
+                            <td>DÍA: <label id="dia"></label></td>
+                            <td>MES: <label id="mes"></label></td>
                         </tr>
                          <tr>
                             <td>RECHAZOS</td>
                             <td><label id="rechazo"></label></td>
-                            <td colspan="2"> <label id="hora">Hora:</label>&nbsp;&nbsp;{hora}</td>
+                            <td colspan="2">Hora: <label id="hora"></label>&nbsp;&nbsp;</td>
                         </tr>
                         <tr>
                             <td>OP. INICIAL</td>
@@ -58,8 +62,8 @@
                 <br>
                 <!-- Insertar un numero generado de la siguiente manera con esas letras literal y esa info: -->
                 <div class="row">
-                    <div class="col-md-5 col-sm-5 col-lg-5">
-                        P<label id="numeroParte">{numeroParte}</label>Q0000{cantidad}S<label id="numeroUnico1">{numeroUnico}</label>L<label id="atado">{atado}</label>
+                    <div class="col-md-6 col-sm-6 col-lg-6" style="font-weight: bold;">
+                        P<label id="numeroParte1">{numeroParte}</label>Q<span id="cantidad1">{cantidad}</span>S<label id="numeroUnico1">{numeroUnico}</label>L<label id="atado">{atado}</label>
                     </div>
                 </div>
                 <br><br><br>
@@ -71,7 +75,7 @@
                 
                 
                 <br><br><br><br><br><br>
-                <p>IMPRIMIO: <label>{nombreOperador}</label></p>
+                <p>IMPRIMIÓ: <label id="nombreOperador">{nombreOperador}</label></p>
                 <p style="text-align: center;"> ATADO: <label id="atado1">{atado}</label></p>
         	</div>
     	</div> 
@@ -84,6 +88,10 @@
 	</body>
      <script>
         $(document).ready(function(){
+            function zeroPad(num) {
+                return num.toString().padStart(6, "0");
+            }
+
             var numeroEmpleado = localStorage.getItem("numEmpleado");
             var atado = localStorage.getItem("atado");
             //$.get("https://localhost:44323/api/app/corte/"+numeroEmpleado+"/detalle?atado="+atado, function(data){
@@ -93,32 +101,39 @@
                     console.log("detalle: ", data)
                     
                     $("#numeroUnico").text(data.numeroUnicoFormato);
-                    $("#numeroParte").text(data.numeroUnicoFormato);
+                    $("#numeroParte").text(data.numeroParte);
                     $("#opInicial").text(data.numeroEmpleado);
                     $("#atado").text(data.atado);
+                    $("#nombreOperador").text(data.nombreOperador);
+                    $("#maquina").text(data.maquina);
+                    $("#cantidad").text(zeroPad(data.cantidad));
+                    $("#rechazo").text(data.rechazos);
+                    $("#atado").text(data.atado);
+                    $("#maquina1").text(data.maquina);
+
+                    $("#numeroParte1").text(data.numeroParte);
+                    $("#cantidad1").text(zeroPad(data.cantidad));
+
+                    //$("#numeroUnico").text(data.numeroUnicoFormato);
+                    //$("#numeroParte").text(data.numeroUnicoFormato);
+                    //$("#opInicial").text(data.numeroEmpleado);
+                    //$("#atado").text(data.atado);
                     $("#nombreOperador").text(data.nombreOperador);
                     $("#numeroUnico1").text(data.numeroUnicoFormato);
                     $("#atado1").text(data.atado);
 
-                    var codigo = "P" + data.numeroUnicoFormato + "Q0000" + "{cantidad}" + "S"+data.numeroUnicoFormato + "L"+data.atado;
+                    var date = new Date(data.numeroUnico); 
+                    $("#mes").text(date.getMonth()+1);
+                    $("#dia").text(date.getDate());
+                    $("#hora").text(date.getHours());
+                    var codigo = "P" + data.numeroUnicoFormato + "Q" + zeroPad(data.cantidad) + "S"+data.numeroUnicoFormato + "L"+data.atado;
 
+                     console.log("ceros: ",zeroPad(data.cantidad))   
                     jQuery("#demo").qrcode({
-                        width: 128,
-                        height: 128,
+                        width: 250,
+                        height: 250,
                         text: codigo
                     });
-
-
-// ó
-
-/*
-jQuery("#demo").qrcode({
-    //render:"table"
-    width: 128,
-    height: 128,
-    text: "http://ourcodeworld.com"
-});
-*/
 
                     window.print();  
 

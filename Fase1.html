@@ -40,10 +40,6 @@
                             <div class="col-lg-2">
                             <input type="text" onkeypress="return ((event.which >= 48 && event.which <= 57) || event.which == 8)" maxlength="8" class="form-control" id="txtnumEmpleado">
                             </div>
-                            <label class="col-md-1 col-form-label">Número de Parte:</label>
-                            <div class="col-lg-2">
-                                <input type="text" onkeypress="return ((event.which >= 48 && event.which <= 57) || event.which == 8)" class="form-control" id="txtParte">
-                            </div>
                             <label class="col-md-1 col-form-label">Número de Atado:</label>
                             <div class="col-lg-3">
                             <input type="text" class="form-control" id="txtnumAtado">
@@ -51,8 +47,29 @@
                             <label class="col-lg-2 col-form-label">Confirmar Número de Atado:</label>
                             <div class="col-lg-3">
                             <input type="text" class="form-control" id="txtAtado2">
-                            </div>
                         </div>
+                    </div>
+                        <div class="form-group row form-group-marginless kt-margin-t-20">
+                            <label class="col-md-1 col-form-label">Número de Cortadora:</label>
+                            <div class="col-lg-2">
+                            <select class="form-control" id="idCortadora">
+                                <option value='0'>Seleccione..</option>
+                                <option value='PPR8001'>PPR8001</option>
+                                <option value='MB0228'>MB0228</option>
+                                </select>
+                            </div>
+                            <label class="col-md-1 col-form-label">Número de Parte:</label>
+                        <div class="col-lg-2">
+                            <input type="text" onkeypress="return ((event.which >= 48 && event.which <= 57) || event.which == 8)" class="form-control" id="txtParte">
+                        </div>
+                        <label class="col-md-1 col-form-label">Cantidad:</label>
+                        <div class="col-lg-2">
+                        <input type="text" onkeypress="return ((event.which >= 48 && event.which <= 57) || event.which == 8)" maxlength="8" class="form-control" id="txtCantidad">
+                        </div>
+                        <label class="col-md-1 col-form-label">Rechazos:</label>
+                        <div class="col-lg-2">
+                        <input type="text" onkeypress="return ((event.which >= 48 && event.which <= 57) || event.which == 8)" maxlength="8" class="form-control" id="txtRechazos">
+                        </div>                              
                     </div>
                     <br>
                     <div class="form-button">
@@ -74,7 +91,6 @@
                            No Existe el Usuario ingresado, favor de darlo de alta
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -88,6 +104,7 @@
         $('#Error').hide();
         $('#Error2').hide(); 
         $('#Error3').hide(); 
+ 
 
         // $.get(" ", function (data) {
 
@@ -97,23 +114,60 @@
             if ($("#txtnumEmpleado").val() === '') {
                 valida = false;
                 $('#Error').show();
+                $("#Error").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error").slideUp(500);
+});
                 return;
             }
             if ($("#txtParte").val() === '') {
                 valida = false;
                 $('#Error').show();
+                $("#Error").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error").slideUp(500);
+});
                 return;
             }
             if ($("#txtnumAtado").val() !== $("#txtAtado2").val()) {
                 valida = false;
                 $('#Error2').show();
+                $("#Error2").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error2").slideUp(500);
+});
                 return;
             }
+            //
+            if ($("#idCortadora").val() === '') {
+                valida = false;
+                $('#Error').show();
+                $("#Error").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error").slideUp(500);
+});
+                return;
+            }
+            if ($("#txtCantidad").val() === '') {
+                valida = false;
+                $('#Error').show();
+                $("#Error").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error").slideUp(500);
+});
+                return;
+            }
+            if ($("#txtRechazos").val() === '') {
+                valida = false;
+                $('#Error').show();
+                $("#Error").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error").slideUp(500);
+});
+                return;
+            }
+        
             var data = {
-                
                 "numeroEmpleado": Number.parseInt($("#txtnumEmpleado").val()),
-                "Parte": Number.parseInt($("#txtParte").val()),
                 "atado":$("#txtnumAtado").val(),
+                "maquina":$("#idCortadora").val(),
+                "numeroParte": Number.parseInt($("#txtParte").val()),
+                "cantidad": parseInt($("#txtCantidad").val()),
+                "rechazos": parseInt($("#txtRechazos").val()),
                 "numeroUnico":new Date(),
             }
             $.ajax({
@@ -127,8 +181,11 @@
             }).done(function (dataResponse) {
                 $('#Exito').show();
                 localStorage.setItem("numEmpleado", Number.parseInt($("#txtnumEmpleado").val()));
-                localStorage.setItem("Parte", Number.parseInt($("#txtParte").val()));
-                localStorage.setItem("atado",$("#txtnumAtado").val());  
+                localStorage.setItem("atado", Number.parseInt($("#txtnumAtado").val())); 
+                // localStorage.setItem("Parte", Number.parseInt($("#txtParte").val()));
+                // localStorage.setItem("cantidad", Number.parseInt($("#txtnumAtado").val())); 
+                // localStorage.setItem("rechazos", Number.parseInt($("#txtnumAtado").val())); 
+                // localStorage.setItem("atado", Number.parseInt($("#txtnumAtado").val())); 
                 window.open('https://oee-form.azurewebsites.net/DetalleFase1.html', '_blank');
                 //window.location = "file:///C:/Users/Unico/Downloads/Trazabilidad/Trazabilidad/DetalleFase1.html";
             });
@@ -145,7 +202,9 @@
             }).fail(function() {
                 $('#Error3').show(); 
                 $("#nombreUsuario").text("")
-
+                $("#Error3").fadeTo(2000, 500).slideUp(500, function(){
+                $("#Error3").slideUp(500);
+});
             });
         });
     });
